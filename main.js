@@ -13,12 +13,19 @@ document.body.appendChild(renderer.domElement);
 const loader = new GLTFLoader();
 loader.load('/Users/hamzashaebi/Desktop/Projects/Three.js/Test 02/3d.glb', function (gltf) {
     const model = gltf.scene;
+
+    // Apply a white material to all meshes in the model
+    model.traverse((node) => {
+        if (node.isMesh) {
+            node.material = new THREE.MeshBasicMaterial({ color: 0xffffff }); // White material
+        }
+    });
+
     model.scale.set(1, 1, 1); // Adjust scale if needed
     scene.add(model);
 
-    // Optionally animate the model
-    model.rotation.y = 0;
-    scene.userData.model = model; // Store the model for animation
+    // Store the model for animation
+    scene.userData.model = model;
 }, undefined, function (error) {
     console.error('An error occurred while loading the model:', error);
 });
