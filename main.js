@@ -9,17 +9,7 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.setAnimationLoop( animate );
 document.body.appendChild( renderer.domElement );
 
-// Cube
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 111111 } );
-const cube = new THREE.Mesh( geometry, material );
-scene.add( cube );
-
-// Cube1
-const cube1geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const cube1material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const cube1 = new THREE.Mesh( cube1geometry, cube1material );
-scene.add( cube1 );
+// Simle
 
 
 
