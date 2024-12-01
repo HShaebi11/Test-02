@@ -1,43 +1,53 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import SplineLoader from '@splinetool/loader';
 
+// camera
+const camera = new THREE.OrthographicCamera(window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2,  -50000, 10000);
+camera.position.set(0, 0, 0);
+camera.quaternion.setFromEuler(new THREE.Euler(0, 0, 0));
+
+// scene
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-const renderer = new THREE.WebGLRenderer();
+// spline scene
+const loader = new SplineLoader();
+loader.load(
+  'https://prod.spline.design/OtRbkxmenw5vEE5O/scene.splinecode',
+  (splineScene) => {
+    scene.add(splineScene);
+  }
+);
+
+// renderer
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setAnimationLoop(animate);
 document.body.appendChild(renderer.domElement);
 
-// Load GLTF model
-const loader = new GLTFLoader();
-loader.load('/Users/hamzashaebi/Desktop/Projects/Three.js/Test 02/3d.glb', function (gltf) {
-    const model = gltf.scene;
+// scene settings
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
 
-    // Apply a white material to all meshes in the model
-    model.traverse((node) => {
-        if (node.isMesh) {
-            node.material = new THREE.MeshBasicMaterial({ color: 0xffffff }); // White material
-        }
-    });
+scene.background = new THREE.Color('#2d2e32');
+renderer.setClearAlpha(1);
 
-    model.scale.set(1, 1, 1); // Adjust scale if needed
-    scene.add(model);
+// orbit controls
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.125;
 
-    // Store the model for animation
-    scene.userData.model = model;
-}, undefined, function (error) {
-    console.error('An error occurred while loading the model:', error);
-});
+window.addEventListener('resize', onWindowResize);
+function onWindowResize() {
+  camera.left = window.innerWidth / - 2;
+  camera.right = window.innerWidth / 2;
+  camera.top = window.innerHeight / 2;
+  camera.bottom = window.innerHeight / - 2;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
 
-// Set up camera position
-camera.position.z = 15;
-
-// Animation loop
-function animate() {
-    if (scene.userData.model) {
-        scene.userData.model.rotation.y += 0.01; // Rotate the model
-    }
-
-    renderer.render(scene, camera);
+function animate(time) {
+  controls.update();
+  renderer.render(scene, camera);
 }
