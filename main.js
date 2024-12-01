@@ -2,28 +2,35 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-renderer.setAnimationLoop( animate );
-document.body.appendChild( renderer.domElement );
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setAnimationLoop(animate);
+document.body.appendChild(renderer.domElement);
 
-// Simle
+// Load GLTF model
+const loader = new GLTFLoader();
+loader.load('/Users/hamzashaebi/Desktop/Projects/Three.js/Test 02/3d.glb', function (gltf) {
+    const model = gltf.scene;
+    model.scale.set(1, 1, 1); // Adjust scale if needed
+    scene.add(model);
 
+    // Optionally animate the model
+    model.rotation.y = 0;
+    scene.userData.model = model; // Store the model for animation
+}, undefined, function (error) {
+    console.error('An error occurred while loading the model:', error);
+});
 
-
-// Oribit
+// Set up camera position
 camera.position.z = 15;
 
+// Animation loop
 function animate() {
+    if (scene.userData.model) {
+        scene.userData.model.rotation.y += 0.01; // Rotate the model
+    }
 
-	cube.rotation.x += 0.01;
-	cube.rotation.y += 0.01;
-	renderer.render( scene, camera );
-
-    cube1.rotation.x += 0.02;
-	cube1.rotation.y += 0.02;
-	renderer.render( scene, camera );
-
+    renderer.render(scene, camera);
 }
